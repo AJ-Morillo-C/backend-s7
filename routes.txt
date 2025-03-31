@@ -1,0 +1,84 @@
+BooksController
+http://localhost:3000/books, POST
+http://localhost:3000/books, GET      
+http://localhost:3000/books/:id, GET  
+http://localhost:3000/books/:id, PATCH
+http://localhost:3000/books/:id, DELETE       
+http://localhost:3000/books/:id/download, POST
+
+UsersController
+http://localhost:3000/users, POST -> registra usuarios
+http://localhost:3000/users, GET 
+http://localhost:3000/users/:id, GET
+http://localhost:3000/users/:id, PATCH
+http://localhost:3000/users/:id, DELETE
+
+AuthorsController
+http://localhost:3000/authors, POST
+http://localhost:3000/authors, GET
+http://localhost:3000/authors/:id, GET
+http://localhost:3000/authors/:id, PATCH
+http://localhost:3000/authors/:id, DELETE
+
+EditorialsController
+http://localhost:3000/editorials, POST
+http://localhost:3000/editorials, GET
+http://localhost:3000/editorials/:id, GET
+http://localhost:3000/editorials/:id, PATCH
+http://localhost:3000/editorials/:id, DELETE
+
+GendersController
+http://localhost:3000/genders, POST
+http://localhost:3000/genders, GET
+http://localhost:3000/genders/:id, GET
+http://localhost:3000/genders/:id, PATCH
+http://localhost:3000/genders/:id, DELETE
+
+ReviewsController
+http://localhost:3000/reviews, POST
+http://localhost:3000/reviews, GET
+http://localhost:3000/reviews/:id, GET
+http://localhost:3000/reviews/:id, PATCH
+http://localhost:3000/reviews/:id, DELETE
+
+FavoritesController
+http://localhost:3000/favorites, POST
+http://localhost:3000/favorites, GET
+http://localhost:3000/favorites/:id, GET
+http://localhost:3000/favorites/:id, PATCH
+http://localhost:3000/favorites/:id, DELETE
+
+AuthController
+http://localhost:3000/auth/register, POST -> registra usuarios y retorna el token
+http://localhost:3000/auth/login, POST
+http://localhost:3000/auth/verify, POST
+
+docker exec -it book_pg bash
+psql -U ubook -d book -f /docker-entrypoint-initdb.d/init.sql
+
+
+```shellscript
+docker-compose up -d
+```
+
+Para verificar que el script se ejecutó correctamente:
+
+```shellscript
+# Conectarse al contenedor PostgreSQL
+docker exec -it book_pg bash
+
+# Dentro del contenedor, conectarse a la base de datos
+psql -U ubook -d book
+
+# Una vez dentro de psql, puedes verificar las tablas creadas
+\dt
+
+# Verificar los datos insertados en la tabla de autores
+SELECT * FROM author;
+
+# Salir de psql
+\q
+
+# Salir del contenedor
+exit
+```

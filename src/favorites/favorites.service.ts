@@ -17,14 +17,23 @@ export class FavoritesService {
 
   async create(createFavoriteDto: CreateFavoriteDto): Promise<FavoriteEntity> {
     try {
-      const favorite = await this.favoritesRepository.save(createFavoriteDto as DeepPartial<FavoriteEntity>);
-      if (!favorite) {
+      // Crea una nueva instancia de FavoriteEntity
+      const favorite = this.favoritesRepository.create({
+        book: { id: createFavoriteDto.bookId }, // Asigna la relación con el libro
+        user: { id: createFavoriteDto.userId }, // Asigna la relación con el usuario
+      });
+
+      // Guarda la entidad en la base de datos
+      const savedFavorite = await this.favoritesRepository.save(favorite);
+
+      if (!savedFavorite) {
         throw new ManagerError({
           type: 'CONFLICT',
           message: 'favorite not created!',
         });
       }
-      return favorite;
+
+      return savedFavorite;
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
@@ -36,12 +45,12 @@ export class FavoritesService {
     try {
       const [total, data] = await Promise.all([
         this.favoritesRepository.count({ where: { isActive: true } }),
-        this.favoritesRepository
-          .createQueryBuilder('favorite')
-          .where({ isActive: true })
-          .take(limit)
-          .skip(skip)
-          .getMany(),
+        this.favoritesRepository.find({
+          where: { isActive: true },
+          relations: ['book', 'user'], // Carga las relaciones
+          take: limit,
+          skip: skip,
+        }),
       ]);
 
       const lastPage = Math.ceil(total / limit);
@@ -66,10 +75,10 @@ export class FavoritesService {
 
   async findOne(id: string): Promise<OneApiResponse<FavoriteEntity>> {
     try {
-      const favorite = await this.favoritesRepository
-        .createQueryBuilder('favorite')
-        .where({ id, isActive: true })
-        .getOne();
+      const favorite = await this.favoritesRepository.findOne({
+        where: { id, isActive: true },
+        relations: ['book', 'user'], // Carga las relaciones
+      });
 
       if (!favorite) {
         throw new ManagerError({
